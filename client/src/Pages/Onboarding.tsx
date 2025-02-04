@@ -1,36 +1,167 @@
-import React, { useState } from 'react'
-
+import axios from 'axios'
+import React, { FormEvent, useState } from 'react'
+import {useCookies } from 'react-cookie'
+import { useNavigate } from 'react-router-dom'
 const Onboarding = () => {
 
+  type ErrorType = {
+    type: string,
+    message:string
+  }
+
+  const Months = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
+
+  const [cookies, setCookie, removeCookies] = useCookies()
+  const [error,setError] = useState<ErrorType | null>(null)
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
+    userId: cookies.userId,
     full_name: "",
-    dob_date: "",
-    dob_month: "",
-    dob_year: "",
+    dob_date: null,
+    dob_month: null,
+    dob_year: null,
     gender: "man",
     show_gender:false,
     interest_gender: "woman",
     about_me: "",
-    profile:"",
+    profile: null,
+    liked_profiles: [],
     matches: []
   })
 
+
+  function checkDob(e:React.FormEvent<HTMLInputElement>) {
+    const name = e.currentTarget.name
+    const value = e.currentTarget.value
+    //check if the value is a number
+    if (/^\d*$/.test(value)) {
+      //CHECKING DATE
+      if(name==="dob_date"){
+        const date = Number(value)
+          //Checking the range of dates
+          if(date <=31 && date>=1)
+          {
+            //Checking days of months are valid
+            if(formData?.dob_month){
+            const month = Number(formData.dob_month)
+            
+               if( (date>=30 && month==2) || (date>=31 && (month===4 || month===6 || month===9 || month===11 )) )
+                {
+                setError({type:"dob", message:`${Months[month-1]} doesn't have ${date} days. Enter valid date`})
+                }
+                else{
+                  setError(null)
+                  handleChange(e)
+                }
+          }
+            else{
+              setError(null)
+              handleChange(e)
+            }
+          }
+          else{
+            setError({type:"dob", message:"Enter valid day"})
+          }
+    }
+      // END CHECKING DATE
+
+      //CHECKING MONTH
+      else if(name==="dob_month"){
+          const month = Number(value)     
+          //checking month range   
+          if(month>=1 && month<=12)
+          {
+            if(formData?.dob_date){
+              const date = formData.dob_date
+                if( (date>=30 && month==2) || (date>=31 && ( month===4 || month===6 || month===9 || month===11 )) )
+                  {
+                    setError({type:"dob", message:`${Months[month-1]} doesn't have ${date} days. Enter valid date`})
+                  }
+                  else{
+                    setError(null)
+                    handleChange(e)
+                  }
+              }
+              else{
+                  setError(null)
+                  handleChange(e)
+              }
+          }
+          else{
+            setError({type:"dob", message: "Enter valid month"})
+          }
+      }
+      //END CHECKING MONTH
+      //CHECKING YEAR
+      else if(name=="dob_year"){
+        const year = Number(value)
+        if(year>2007){
+          setError({type:"dob", message:"You have to be 18+ to use this app"})
+        }
+        else if(year<1900){
+          setError({type:"dob", message:"Enter valid year"})
+        }
+        else{
+          setError(null)
+          handleChange(e)
+        }
+      }
+      //END CHECKING YEAR
+    }
+    else{
+      setError({type:"dob",message:"Enter numbers only"})
+    }
+    
+  }
+  
+  const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
+    const { name, value, type, files } = e.currentTarget;
+    console.log("image uplaoded")
+    if (type === 'file' && files) {
+      setFormData(prevState => ({ ...prevState, [name]: files[0] }));
+    } else {
+      setFormData(prevState => ({ ...prevState, [name]: value }));
+    }
+  };
+
   const handleChange = (e:React.FormEvent<HTMLInputElement>) =>{
+    console.log("image not uploaded")
     var name = e.currentTarget.name 
     var value = e.currentTarget.type==="checkbox"? e.currentTarget.checked:e.currentTarget.value
     setFormData(prevState=>({...prevState,[name]:value }))
-    console.log(formData);
+    // console.log(formData);
     
-    console.log("change");
+    // console.log("change");
     
   }
 
+  const handleSubmit = async(e:FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+
+    try{
+      const response =await axios.put("http://localhost:3000/user",formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data', 
+        },
+      })
+      const success = response.status == 200
+      success?navigate("/dashboard"):setError({type:"submit",message: "some error occured"})
+      console.log(response)
+    }
+    catch(err){
+      console.log(err)
+      setError({type:"submit",message:"error caught"})
+
+    }
+  }
+
   return (
-    <div className='h-screen  py-5 px-20 overflow-hidden flex flex-col font-iniria-serif'>
-      <p className='font-bold text-4xl font-iniria-serif text-center'>Create Account</p>
+    <div className='h-screen  py-5 sm:px-20 px-6 overflow flex flex-col font-iniria-serif'>
+      <p className='font-bold sm:text-4xl text-3xl font-iniria-serif text-center'>Create Account</p>
       <div >
-        <form className='w-full flex justify-between gap-20 mt-10'>
-          <div className='flex flex-col w-1/2 '>
+        <form className='w-full flex sm:flex-row flex-col sm:items-start items-center sm:justify-between sm:gap-20 mt-10' onSubmit={handleSubmit}>
+          <div className='flex flex-col w-full sm:w-1/2 '>
            {/* NAME  */}
            <label htmlFor='full name' className='font-semibold text-xl mb-4'>Full Name</label>
            <input
@@ -45,32 +176,33 @@ const Onboarding = () => {
            <label htmlFor='birthday' className='font-semibold text-xl mb-4'>
               Birthday
            </label>
-            <div>
+            <div className={`${error?.type=="dob"?"mb-10":"mb-2" }`}>
               <input
                 type='text'
-                className='border-2 border-slate-400 rounded-md py-1 px-1  mb-10 w-16 mr-2 text-center'
+                className='border-2 border-slate-400 rounded-md py-1 px-1   md:w-16 w-10 mr-2 text-center'
                 name='dob_date'
                 placeholder='DD'
                 required={true}
-                onChange={handleChange}
+                onChange={(e)=>checkDob(e)}
                 />
               <input
                 type='text'
-                className='border-2 border-slate-400 rounded-md py-1 px-1 mb-10 w-16 mr-2 text-center'
+                className='border-2 border-slate-400 rounded-md py-1 px-1  md:w-16 w-10 mr-2 text-center'
                 name='dob_month'
                 placeholder='MM'
                 required={true}
-                onChange={handleChange}
+                onChange={(e)=>{checkDob(e)}}
                 />
               <input
                 type='text'
-                className='border-2 border-slate-400 rounded-md py-1 px-1 mb-10 w-16 mr-2 text-center'
+                className={`border-2 border-slate-400 rounded-md py-1 px-1  md:w-16 w-10 mr-2 text-center`}
                 name='dob_year'
                 placeholder='YYYY'
                 required={true}
-                onChange={handleChange}
+                onChange={(e)=>{checkDob(e)}}
                 />
               </div>
+              {error?.type=="dob" && <p className='text-red-500'>{error?.message}</p>}
            {/* GENDER */}
               <label htmlFor='gender' className='font-semibold text-xl mb-4'>
                 Gender
@@ -182,8 +314,12 @@ const Onboarding = () => {
                   </label>
               </div>
 
-           {/* ABOUT ME */}
-              <label htmlFor='about_me' className='font-semibold text-xl mb-4'>About Me</label>
+           
+      </div>
+          
+      <div className='flex flex-col w-full sm:w-1/2 '>
+      {/* ABOUT ME */}
+      <label htmlFor='about_me' className='font-semibold text-xl mb-4'>About Me</label>
               <input
                 className='border-2 border-slate-400 rounded-md py-1 px-2 mb-10'
                   type='text'
@@ -192,20 +328,22 @@ const Onboarding = () => {
                   required={true}
                   onChange={handleChange}
                 />
-      </div>
-          
-      <div className='flex flex-col w-1/2 '>
               <label htmlFor='Profile' className='font-semibold text-xl mb-4'>Profile</label>
                 <input
                   className='border-2 border-slate-400 rounded-md py-1 px-2 mb-10'
-                    type='text'
+                    type='file'
+                    accept="image/*"
                     name='profile'
-                    value={formData.profile}
-                    placeholder='https://myself.com'
                     required={true}
-                    onChange={handleChange}
+                    onChange={handleFileChange}
                 />
-                <img src={formData.profile && formData.profile} ></img>
+                {formData.profile && <img src={URL.createObjectURL(formData.profile)} alt="Profile Preview" />}
+                {/* <img src={formData.profile && formData.profile} ></img> */}
+                <input
+                type='submit'
+                name='submit'
+                className=' w-20 mb-2 self-center px-3 py-1 rounded-full border-2 border-pinkbg2 hover:bg-pinkbg1 hover:text-white'
+                />
           </div>
         </form>
       </div>

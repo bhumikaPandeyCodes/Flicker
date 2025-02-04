@@ -20,5 +20,29 @@
     background-repeat: no-repeat;
     content: '';
   }
-  
-  
+
+  .HideMenu{
+  display: none;
+  }
+
+  .ShowMenu{
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  align-items: center;
+  position: absolute;
+  width: 50%;
+  height: calc(100% - 59px);
+  background: linear-gradient(90deg, rgba(164,99,186,1) 0%, rgba(138,63,152,1) 100%);
+  padding: 16px 44px;
+  bottom:0;
+  right:0;
+  z-index: 20;
+}
+
+.ShowMenu>ul >li{
+  margin:28px 0;
+  color: #e9ebef;
+  font-size: 16px;
+  text-align: center;
+}

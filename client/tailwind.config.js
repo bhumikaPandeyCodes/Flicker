@@ -13,8 +13,10 @@ export default {
           "pinkbg1": "#8A3F98",
           "pinkbg2": "#843B8D",
           "pinkbg3": "#350404",
+          "light-pink-50": "#E6C8F0",
           "light-pink-200": "#D68FED",
           "light-pink-300": "#A463BA",
+          "violet":"#240F4B"
       },
       fontFamily: {
         "iniria-serif":["Inria Serif", "serif"],
@@ -23,7 +25,7 @@ export default {
         "heading-font": ["Noto Serif Display","serif"]
       },
       borderWidth: {
-        DEFAULT: '1px',
+        '1': '1px',
         '0': '0',
         '2': '2px',
         '3': '2.5px',
@@ -51,7 +53,9 @@ plugins: [
           )
       })
   }),
-  tailwindcssMotion
+  tailwindcssMotion,
+  require('tailwind-scrollbar')({ preferredStrategy: 'pseudoelements' }),
+
 ],
 }
 
