@@ -5,6 +5,8 @@
 <ul>
     <li>Signup</li>
     <li>Signin</li>
+    <li>used jsonwebtoken to generate token and store using react cookies</li>
+    <li>secured password using bcrypt hashing</li>
     <li>Swipe and find new matches</li>
     <li>If the person you swiped also swiped you that means you are match and can start to chat </li>
     <li>View details of your matches</li>
