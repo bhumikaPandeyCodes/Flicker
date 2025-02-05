@@ -7,6 +7,8 @@ import InputMessage from './InputMessage'
 import { MatchedUser } from '../../utils/types'
 import { useRecoilValue } from 'recoil'
 import axios from 'axios'
+// import 'dotenv/config'
+
 const ChatDisplay = () => {
     const userInfoVal = useRecoilValue(userInfo)
     const [matchesArray, setMatchesArray] = useState<MatchedUser[]>([])

@@ -6,6 +6,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { MatchedUser } from '../utils/types'
 import SwipeBtn from '../assets/left_arrow.png'
 import { showMatches } from '../utils/Atoms'
+// import 'dotenv/config'
+
 const Swipe = () => {
 
 

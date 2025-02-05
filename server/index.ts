@@ -5,9 +5,7 @@ import { MongoClient } from "mongodb"
 import bcrypt from "bcrypt"
 import cors from "cors"
 import jwt from "jsonwebtoken"
-import zod from "zod"
 import { v4 as uuidv4 } from "uuid"
-import { exitCode } from "process"
 import 'dotenv/config'
 const app = express()
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10): 3000
@@ -126,8 +124,9 @@ app.post("/login", async (req,res)=>{
 app.put("/user", async (req,res)=>{
     //GET THE INFO FROM USER
     const formData = req.body.formData
+    console.log("formData")
+    console.log(formData)
     const capitalName = formData.full_name.split(' ').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    // console.log(formData)
     //INSERT IN THE DATABASE
     try{
         await client.connect()

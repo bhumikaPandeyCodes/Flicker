@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { userInfo } from '../../utils/Atoms';
 import axios from 'axios';
 import { useRecoilValue } from 'recoil';
+// import 'dotenv/config'
 
 interface Props {
   chatUserId: String;  

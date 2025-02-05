@@ -4,6 +4,8 @@ import { showModal,isSignup } from '../utils/Atoms'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
+// import 'dotenv/config'
+
 
 const AuthModal = () => {
     

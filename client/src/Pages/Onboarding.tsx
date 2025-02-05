@@ -2,6 +2,8 @@ import axios from 'axios'
 import React, { FormEvent, useState } from 'react'
 import {useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
+// import 'dotenv/config'
+
 const Onboarding = () => {
 
   type ErrorType = {
@@ -10,7 +12,7 @@ const Onboarding = () => {
   }
 
   const Months = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
-
+  // const URL = process.env.backend_url
   const [cookies, setCookie, removeCookies] = useCookies()
   const [error,setError] = useState<ErrorType | null>(null)
   const navigate = useNavigate()
@@ -25,7 +27,7 @@ const Onboarding = () => {
     show_gender:false,
     interest_gender: "woman",
     about_me: "",
-    profile: null,
+    profile: '',
     liked_profiles: [],
     matches: []
   })
@@ -115,18 +117,17 @@ const Onboarding = () => {
     
   }
   
-  const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
-    const { name, value, type, files } = e.currentTarget;
-    console.log("image uplaoded")
-    if (type === 'file' && files) {
-      setFormData(prevState => ({ ...prevState, [name]: files[0] }));
-    } else {
-      setFormData(prevState => ({ ...prevState, [name]: value }));
-    }
-  };
+  // const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
+  //   const { name, value, type, files } = e.currentTarget;
+  //   console.log("image uplaoded")
+  //   if (type === 'file' && files) {
+  //     setFormData(prevState => ({ ...prevState, [name]: files[0] }));
+  //   } else {
+  //     setFormData(prevState => ({ ...prevState, [name]: value }));
+  //   }
+  // };
 
   const handleChange = (e:React.FormEvent<HTMLInputElement>) =>{
-    console.log("image not uploaded")
     var name = e.currentTarget.name 
     var value = e.currentTarget.type==="checkbox"? e.currentTarget.checked:e.currentTarget.value
     setFormData(prevState=>({...prevState,[name]:value }))
@@ -138,13 +139,10 @@ const Onboarding = () => {
 
   const handleSubmit = async(e:FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
+    console.log(formData)
 
     try{
-      const response =await axios.put("http://localhost:3000/user",formData,{
-        headers: {
-          'Content-Type': 'multipart/form-data', 
-        },
-      })
+      const response =await axios.put("http://localhost:3000/user",{formData})
       const success = response.status == 200
       success?navigate("/dashboard"):setError({type:"submit",message: "some error occured"})
       console.log(response)
@@ -331,13 +329,12 @@ const Onboarding = () => {
               <label htmlFor='Profile' className='font-semibold text-xl mb-4'>Profile</label>
                 <input
                   className='border-2 border-slate-400 rounded-md py-1 px-2 mb-10'
-                    type='file'
-                    accept="image/*"
+                    type='text'
                     name='profile'
                     required={true}
-                    onChange={handleFileChange}
+                    onChange={handleChange}
                 />
-                {formData.profile && <img src={URL.createObjectURL(formData.profile)} alt="Profile Preview" />}
+                {formData.profile && <img src={formData.profile} alt="Profile Preview" />}
                 {/* <img src={formData.profile && formData.profile} ></img> */}
                 <input
                 type='submit'

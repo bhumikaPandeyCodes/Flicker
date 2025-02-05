@@ -3,6 +3,7 @@ import { userInfo } from '../../utils/Atoms'
 import { useRecoilValue } from 'recoil'
 import axios from 'axios';
 import { MatchedUser } from '../../utils/types';
+// import 'dotenv/config'
 
 interface Props {
   setClickedUser: React.Dispatch<React.SetStateAction<MatchedUser | null>>;

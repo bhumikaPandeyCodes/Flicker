@@ -4,6 +4,7 @@ import img2 from '../../assets/guy.jpg'
 import { userInfo } from '../../utils/Atoms';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
+// import 'dotenv/config'
 
 interface Props {
   chatUserId: String;
