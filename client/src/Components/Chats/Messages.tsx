@@ -4,7 +4,7 @@ import img2 from '../../assets/guy.jpg'
 import { userInfo } from '../../utils/Atoms';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
-// import 'dotenv/config'
+import { BACKEND_URL } from '../../../config';
 
 interface Props {
   chatUserId: String;
@@ -40,7 +40,7 @@ const Messages = ({chatUserId,refreshTrigger}: Props) => {
 
   const getMatchUser = async()=>{
     try{
-      const response = await axios.get("http://localhost:3000/match-user", {
+      const response = await axios.get(`http://${BACKEND_URL}/match-user`, {
         params:{userId: chatUserId}
       })
       setMatchInfo(response.data)
@@ -57,7 +57,7 @@ const Messages = ({chatUserId,refreshTrigger}: Props) => {
     try{
       const senderId = userId
       const receiverId = chatUserId
-      const response = await axios.get("http://localhost:3000/messages", {params: {senderId, receiverId}})
+      const response = await axios.get(`http://${BACKEND_URL}/messages`, {params: {senderId, receiverId}})
       // console.log(response.data)
       setUserSentMessages(response.data)
     }
@@ -69,7 +69,7 @@ const Messages = ({chatUserId,refreshTrigger}: Props) => {
     try{
       const senderId = chatUserId
       const receiverId = userId
-      const response = await axios.get("http://localhost:3000/messages", {params: {senderId, receiverId}})
+      const response = await axios.get(`http://${BACKEND_URL}/messages`, {params: {senderId, receiverId}})
       // console.log(response.data)
       setMatchSentMessages(response.data)
     }

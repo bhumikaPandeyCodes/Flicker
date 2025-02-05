@@ -124,8 +124,8 @@ app.post("/login", async (req,res)=>{
 app.put("/user", async (req,res)=>{
     //GET THE INFO FROM USER
     const formData = req.body.formData
-    console.log("formData")
-    console.log(formData)
+    // console.log("formData")
+    // console.log(formData)
     const capitalName = formData.full_name.split(' ').map((word:string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     //INSERT IN THE DATABASE
     try{

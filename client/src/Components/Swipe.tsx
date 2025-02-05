@@ -6,8 +6,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { MatchedUser } from '../utils/types'
 import SwipeBtn from '../assets/left_arrow.png'
 import { showMatches } from '../utils/Atoms'
-// import 'dotenv/config'
-
+import { BACKEND_URL } from '../../config'
 const Swipe = () => {
 
 
@@ -23,7 +22,7 @@ const Swipe = () => {
 
         try{
     
-        const response = await axios.get("http://localhost:3000/user",{
+        const response = await axios.get(`http://${BACKEND_URL}/user`,{
           params:{userId}
         }
       )
@@ -56,7 +55,7 @@ const Swipe = () => {
       const getInterestGender = async ()=>{
         if(userInfoVal.interest_gender!=""){
           try{
-            const response = await axios.get("http://localhost:3000/interest-gender", 
+            const response = await axios.get(`http://${BACKEND_URL}/interest-gender`, 
               {params:{interest_gender: userInfoVal.interest_gender,gender:userInfoVal.gender }})
             //   console.log("getinterestgender")
             // console.log(response.data)
@@ -89,7 +88,7 @@ const Swipe = () => {
       const updateLikedProfiles = async (likedUserId:String)=>{
         try{
           console.log("heyyyeyeyeye")
-          const response = await axios.put("http://localhost:3000/liked-profiles",{userId:userInfoVal.userId, matchId:likedUserId})
+          const response = await axios.put(`http://${BACKEND_URL}/liked-profiles`,{userId:userInfoVal.userId, matchId:likedUserId})
           // console.log(response)
           if(response.data.success){
             updateMatches(likedUserId)
@@ -102,7 +101,7 @@ const Swipe = () => {
       const updateMatches = async (matchedUserId:String) =>{ 
     
         try{
-          const response = await axios.put("http://localhost:3000/update-matches", {userId:userInfoVal.userId, matchId:matchedUserId})
+          const response = await axios.put(`http://${BACKEND_URL}/update-matches`, {userId:userInfoVal.userId, matchId:matchedUserId})
           console.log(response)
         }
         catch(err){
@@ -194,12 +193,12 @@ const Swipe = () => {
                 onAnimationEnd={handleAnimationEnd} 
               > 
               </div>
-                <div className='bg-white md:h-[15vh] h-[16vh] w-full rounded-b-lg absolute z-5 p-2 bottom-2 text-black flex flex-col justify-start items-start gap-2'>
+                <div className='bg-white md:h-[15vh] h-[16vh] w-full rounded-b-lg absolute z-5 p-2 bottom-2 text-black flex flex-col justify-start items-start gap-1'>
                     <div className='flex justify-between w-full'>
                         <span className='font-semibold text-xl'>{user.full_name}</span>
                         {user.show_gender && <span className='font-medium text-pinkbg1'>{user.gender}</span>}
                     </div>
-                    <div> 
+                    <div className='pb-2'> 
                         <span className='font-medium text-base text-gray-600'>About Me: </span>
                          <span className='text-sm'>{user.about_me}</span>
                     </div>

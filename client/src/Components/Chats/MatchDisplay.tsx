@@ -3,8 +3,7 @@ import { userInfo } from '../../utils/Atoms'
 import { useRecoilValue } from 'recoil'
 import axios from 'axios';
 import { MatchedUser } from '../../utils/types';
-// import 'dotenv/config'
-
+import { BACKEND_URL } from '../../../config';
 interface Props {
   setClickedUser: React.Dispatch<React.SetStateAction<MatchedUser | null>>;
 }
@@ -22,7 +21,7 @@ const MatchDisplay: React.FC<Props> = ({ setClickedUser }) => {
         try{
 
           //make a api call
-          const response = await axios.get("http://localhost:3000/users",
+          const response = await axios.get(`http://${BACKEND_URL}/users`,
             {
               params: {MatchesIds: JSON.stringify(Matches)}
             }

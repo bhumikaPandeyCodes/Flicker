@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MatchImage from '../../assets/girl2.jpg'
 import BackBtn from '../../assets/left_arrow.png'
 import axios from 'axios';
-// import 'dotenv/config'
-
+import { BACKEND_URL } from '../../../config';
 interface Props {
   chatUserId: String;
   setChatUserId: React.Dispatch<React.SetStateAction<String>>;
@@ -19,7 +18,7 @@ const ChatHeader = ({chatUserId, setChatUserId}: Props) => {
 
   const getUser = async ()=>{
     try{
-        const response = await axios.get("http://localhost:3000/match-user", {
+        const response = await axios.get(`http://${BACKEND_URL}/match-user`, {
           params:{userId: chatUserId}
         })
         setUserInfo(response.data)

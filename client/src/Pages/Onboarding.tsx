@@ -2,8 +2,7 @@ import axios from 'axios'
 import React, { FormEvent, useState } from 'react'
 import {useCookies } from 'react-cookie'
 import { useNavigate } from 'react-router-dom'
-// import 'dotenv/config'
-
+import {BACKEND_URL} from '../../config'
 const Onboarding = () => {
 
   type ErrorType = {
@@ -12,7 +11,6 @@ const Onboarding = () => {
   }
 
   const Months = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
-  // const URL = process.env.backend_url
   const [cookies, setCookie, removeCookies] = useCookies()
   const [error,setError] = useState<ErrorType | null>(null)
   const navigate = useNavigate()
@@ -131,7 +129,6 @@ const Onboarding = () => {
     var name = e.currentTarget.name 
     var value = e.currentTarget.type==="checkbox"? e.currentTarget.checked:e.currentTarget.value
     setFormData(prevState=>({...prevState,[name]:value }))
-    // console.log(formData);
     
     // console.log("change");
     
@@ -142,7 +139,7 @@ const Onboarding = () => {
     console.log(formData)
 
     try{
-      const response =await axios.put("http://localhost:3000/user",{formData})
+      const response =await axios.put(`http://${BACKEND_URL}/user`,{formData})
       const success = response.status == 200
       success?navigate("/dashboard"):setError({type:"submit",message: "some error occured"})
       console.log(response)

@@ -2,8 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { userInfo } from '../../utils/Atoms';
 import axios from 'axios';
 import { useRecoilValue } from 'recoil';
-// import 'dotenv/config'
-
+import { BACKEND_URL } from '../../../config';
 interface Props {
   chatUserId: String;  
   
@@ -27,7 +26,7 @@ const InputMessage = ({chatUserId}:Props) => {
       else{
         try{
 
-          const response = await axios.post("http://localhost:3000/send-message", 
+          const response = await axios.post(`http://${BACKEND_URL}/send-message`, 
           {senderId: userInfoVal.userId, receiverId: chatUserId, message: inputMessage})
           // console.log(response.data)
           const success = response.data.success

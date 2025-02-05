@@ -28,7 +28,7 @@ const LandingPage = () => {
   const handleClick = ()=>{
     if(logedIn)
     {
-      console.log("Continue Swiping -->go to dashboard")
+      // console.log("Continue Swiping -->go to dashboard")
       navigate("/dashboard")
       return 
     }

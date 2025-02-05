@@ -4,8 +4,7 @@ import { showModal,isSignup } from '../utils/Atoms'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
-// import 'dotenv/config'
-
+import { BACKEND_URL } from '../../config'
 
 const AuthModal = () => {
     
@@ -52,7 +51,7 @@ const AuthModal = () => {
           }
       console.log("submit ", isSignupValue)
 
-            const response = await axios.post(`http://localhost:3000/${isSignupValue?"signup":"login"}`, {email: emailValue, password: passwordValue})
+            const response = await axios.post(`http://${BACKEND_URL}/${isSignupValue?"signup":"login"}`, {email: emailValue, password: passwordValue})
             console.log("handling login request using axios")
             const success = response.status == 200
             // console.log(response.data.token)

@@ -7,8 +7,7 @@ import InputMessage from './InputMessage'
 import { MatchedUser } from '../../utils/types'
 import { useRecoilValue } from 'recoil'
 import axios from 'axios'
-// import 'dotenv/config'
-
+import { BACKEND_URL } from '../../../config'
 const ChatDisplay = () => {
     const userInfoVal = useRecoilValue(userInfo)
     const [matchesArray, setMatchesArray] = useState<MatchedUser[]>([])
@@ -19,7 +18,7 @@ const ChatDisplay = () => {
     // useEffect(()=>console.log(Matches),[])
     const getUsers = async()=>{
         try{
-                const response = await axios.get("http://localhost:3000/users",
+                const response = await axios.get(`http://${BACKEND_URL}/users`,
                     {
                         params: {MatchesIds: JSON.stringify(Matches)}
                     }
