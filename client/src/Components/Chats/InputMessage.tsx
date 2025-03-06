@@ -26,7 +26,7 @@ const InputMessage = ({chatUserId}:Props) => {
       else{
         try{
 
-          const response = await axios.post(`http://${BACKEND_URL}/send-message`, 
+          const response = await axios.post(`${BACKEND_URL}/send-message`, 
           {senderId: userInfoVal.userId, receiverId: chatUserId, message: inputMessage})
           // console.log(response.data)
           const success = response.data.success

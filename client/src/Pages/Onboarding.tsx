@@ -139,7 +139,7 @@ const Onboarding = () => {
     console.log(formData)
 
     try{
-      const response =await axios.put(`http://${BACKEND_URL}/user`,{formData})
+      const response =await axios.put(`${BACKEND_URL}/user`,{formData})
       const success = response.status == 200
       success?navigate("/dashboard"):setError({type:"submit",message: "some error occured"})
       console.log(response)

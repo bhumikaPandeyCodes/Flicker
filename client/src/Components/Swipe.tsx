@@ -21,7 +21,7 @@ const Swipe = () => {
 
         try{
     
-        const response = await axios.get(`http://${BACKEND_URL}/user`,{
+        const response = await axios.get(`${BACKEND_URL}/user`,{
           params:{userId}
         }
       )
@@ -54,7 +54,7 @@ const Swipe = () => {
       const getInterestGender = async ()=>{
         if(userInfoVal.interest_gender!=""){
           try{
-            const response = await axios.get(`http://${BACKEND_URL}/interest-gender`, 
+            const response = await axios.get(`${BACKEND_URL}/interest-gender`, 
               {params:{interest_gender: userInfoVal.interest_gender,gender:userInfoVal.gender }})
             //   console.log("getinterestgender")
             // console.log(response.data)
@@ -87,7 +87,7 @@ const Swipe = () => {
       const updateLikedProfiles = async (likedUserId:String)=>{
         try{
           console.log("heyyyeyeyeye")
-          const response = await axios.put(`http://${BACKEND_URL}/liked-profiles`,{userId:userInfoVal.userId, matchId:likedUserId})
+          const response = await axios.put(`${BACKEND_URL}/liked-profiles`,{userId:userInfoVal.userId, matchId:likedUserId})
           // console.log(response)
           if(response.data.success){
             updateMatches(likedUserId)
@@ -100,7 +100,7 @@ const Swipe = () => {
       const updateMatches = async (matchedUserId:String) =>{ 
     
         try{
-          const response = await axios.put(`http://${BACKEND_URL}/update-matches`, {userId:userInfoVal.userId, matchId:matchedUserId})
+          const response = await axios.put(`${BACKEND_URL}/update-matches`, {userId:userInfoVal.userId, matchId:matchedUserId})
           console.log(response)
         }
         catch(err){

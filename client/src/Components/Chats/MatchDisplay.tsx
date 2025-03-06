@@ -21,7 +21,7 @@ const MatchDisplay: React.FC<Props> = ({ setClickedUser }) => {
         try{
 
           //make a api call
-          const response = await axios.get(`http://${BACKEND_URL}/users`,
+          const response = await axios.get(`${BACKEND_URL}/users`,
             {
               params: {MatchesIds: JSON.stringify(Matches)}
             }

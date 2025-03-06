@@ -38,7 +38,7 @@ const Messages = ({chatUserId,refreshTrigger}: Props) => {
 
   const getMatchUser = async()=>{
     try{
-      const response = await axios.get(`http://${BACKEND_URL}/match-user`, {
+      const response = await axios.get(`${BACKEND_URL}/match-user`, {
         params:{userId: chatUserId}
       })
       setMatchInfo(response.data)
@@ -55,7 +55,7 @@ const Messages = ({chatUserId,refreshTrigger}: Props) => {
     try{
       const senderId = userId
       const receiverId = chatUserId
-      const response = await axios.get(`http://${BACKEND_URL}/messages`, {params: {senderId, receiverId}})
+      const response = await axios.get(`${BACKEND_URL}/messages`, {params: {senderId, receiverId}})
       // console.log(response.data)
       setUserSentMessages(response.data)
     }
@@ -67,7 +67,7 @@ const Messages = ({chatUserId,refreshTrigger}: Props) => {
     try{
       const senderId = chatUserId
       const receiverId = userId
-      const response = await axios.get(`http://${BACKEND_URL}/messages`, {params: {senderId, receiverId}})
+      const response = await axios.get(`${BACKEND_URL}/messages`, {params: {senderId, receiverId}})
       // console.log(response.data)
       setMatchSentMessages(response.data)
     }

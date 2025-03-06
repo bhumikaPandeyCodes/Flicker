@@ -17,7 +17,7 @@ const ChatHeader = ({chatUserId, setChatUserId}: Props) => {
 
   const getUser = async ()=>{
     try{
-        const response = await axios.get(`http://${BACKEND_URL}/match-user`, {
+        const response = await axios.get(`${BACKEND_URL}/match-user`, {
           params:{userId: chatUserId}
         })
         setUserInfo(response.data)

@@ -18,7 +18,7 @@ const ChatDisplay = () => {
     // useEffect(()=>console.log(Matches),[])
     const getUsers = async()=>{
         try{
-                const response = await axios.get(`http://${BACKEND_URL}/users`,
+                const response = await axios.get(`${BACKEND_URL}/users`,
                     {
                         params: {MatchesIds: JSON.stringify(Matches)}
                     }

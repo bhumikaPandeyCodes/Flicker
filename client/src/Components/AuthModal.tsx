@@ -52,7 +52,7 @@ const AuthModal = () => {
       {
       console.log("submit ", isSignupValue)
 
-            const response = await axios.post(`http://${BACKEND_URL}/${isSignupValue?"signup":"login"}`, {email: emailValue, password: passwordValue})
+            const response = await axios.post(`${BACKEND_URL}/${isSignupValue?"signup":"login"}`, {email: emailValue, password: passwordValue})
             console.log("handling login request using axios")
             const success = response.status == 200
             // console.log(response.data.token)
