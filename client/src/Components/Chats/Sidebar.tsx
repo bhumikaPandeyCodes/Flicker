@@ -1,10 +1,11 @@
 import React, {  useState } from 'react'
-import ChatDisplay from './Chatdisplay'
+// import ChatDisplay from './Chatdisplay'
 import MatchDisplay from './MatchDisplay'
+import { userInfo } from '../../utils/Atoms'
 import { useRecoilValue } from 'recoil'
 import { MatchedUser } from '../../utils/types'
 import { showMatches } from '../../utils/Atoms'
-
+import ChatDisplay from './ChatDisplay'
 interface Props {
   setClickedUser: React.Dispatch<React.SetStateAction<MatchedUser | null>>;
 }
