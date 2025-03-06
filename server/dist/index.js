@@ -27,6 +27,10 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const client = new mongodb_1.MongoClient(URI);
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('heyllo world');
+    res.status(200).send('heloo');
+}));
 // SIGNUP //
 app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //taking the email and password - 
@@ -76,7 +80,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const db = client.db("flicker");
         const user = db.collection("users");
         const findUser = yield user.findOne({ email });
-        // console.log(findUser)
+        console.log(findUser);
         if (!findUser) {
             res.status(400).json({ message: "email not found" });
             console.log("email not found");

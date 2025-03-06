@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // IMPORTING IMAGES
@@ -18,7 +17,7 @@ const LandingPage = () => {
   const logedIn = useRecoilValue(isLogedIn)
   const setShowModal = useSetRecoilState(showModal)
   const showModalValue = useRecoilValue(showModal)
-  const [isSignupValue, setisSignupValue] = useRecoilState(isSignup)
+  const [_isSignupValue, setisSignupValue] = useRecoilState(isSignup)
 
   // const setShowModal = useSetRecoilState(showModal)
   // console.log("in landing page ",showModalValue, isSignupValue)  

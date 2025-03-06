@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { userInfo } from '../../utils/Atoms'
 import ChatHeader from './ChatHeader'
 import Messages from './Messages'

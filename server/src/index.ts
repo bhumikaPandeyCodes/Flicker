@@ -18,6 +18,11 @@ app.use(cors())
 app.use(express.json()) 
  
 
+app.get("/", async(req,res)=>{
+    console.log('heyllo world')
+    res.status(200).send('heloo')
+})
+
 
 // SIGNUP //
 app.post("/signup",async (req,res)=>{
@@ -81,7 +86,7 @@ app.post("/login", async (req,res)=>{
         const db = client.db("flicker")
         const user = db.collection("users")
         const findUser = await user.findOne({email})
-        // console.log(findUser)
+        console.log(findUser)
         if(!findUser){
             res.status(400).json({message:"email not found"})
             console.log("email not found")

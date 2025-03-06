@@ -1,7 +1,7 @@
-import React, {ChangeEvent,FormEvent, useState} from 'react'
+import {ChangeEvent,FormEvent, useState} from 'react'
 import axios from 'axios'
 import { showModal,isSignup } from '../utils/Atoms'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import { BACKEND_URL } from '../../config'
@@ -15,10 +15,10 @@ const AuthModal = () => {
     const [passwordValue, setPasswordValue]=useState("")
     const [confirmPasswordValue, setConfirmPasswordValue]=useState("")
     const [error, setError] = useState("")
-    const [cookie, setCookies, removeCookies] = useCookies()
+    const [_cookie, setCookies, _removeCookies] = useCookies()
     
     const setShowModal = useSetRecoilState(showModal)
-    const showmodalValue = useRecoilValue(showModal)
+    // const showmodalValue = useRecoilValue(showModal)
     // console.log(" show modal", showmodalValue)
     // console.log("singupvalue", isSignupValue)
     
@@ -43,12 +43,13 @@ const AuthModal = () => {
     const  handleSubmit = async(e: FormEvent<HTMLFormElement>)=>{
       e.preventDefault()
 
+      if(isSignupValue && (passwordValue != confirmPasswordValue))
+      {
+        setError("Password and Confirm Password does not match")
+      }
+      else{
       try
       {
-          if(isSignupValue && (passwordValue != confirmPasswordValue))
-          {
-            setError("Password and Confirm Password does not match")
-          }
       console.log("submit ", isSignupValue)
 
             const response = await axios.post(`http://${BACKEND_URL}/${isSignupValue?"signup":"login"}`, {email: emailValue, password: passwordValue})
@@ -75,6 +76,7 @@ const AuthModal = () => {
         }
           
       }
+    }
 
       // console.log(emailValue, passwordValue);
       

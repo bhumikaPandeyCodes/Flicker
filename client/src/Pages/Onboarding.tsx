@@ -11,7 +11,7 @@ const Onboarding = () => {
   }
 
   const Months = ["January", "February", "March", "April", "May", "June","July","August","September","October","November","December"]
-  const [cookies, setCookie, removeCookies] = useCookies()
+  const [cookies, _setCookie, _removeCookies] = useCookies()
   const [error,setError] = useState<ErrorType | null>(null)
   const navigate = useNavigate()
 

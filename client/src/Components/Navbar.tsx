@@ -1,9 +1,6 @@
-import React, { Dispatch,SetStateAction, useState } from 'react'
 import HeartIcon from "../assets/icon-heart.png"
-import menuImage from "../assets/menu.png"
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { isLogedIn, isSignup, showModal } from '../utils/Atoms'
-import AuthModal from './AuthModal'
 
 
 

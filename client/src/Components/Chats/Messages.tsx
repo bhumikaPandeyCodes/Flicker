@@ -1,6 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
-import img1 from '../../assets/girl2.jpg'
-import img2 from '../../assets/guy.jpg'
+import { useEffect, useRef, useState } from 'react'
 import { userInfo } from '../../utils/Atoms';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';

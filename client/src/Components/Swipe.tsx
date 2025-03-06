@@ -2,8 +2,7 @@ import {useEffect, useState} from 'react'
 import { useCookies } from 'react-cookie'
 import axios from 'axios'
 import { userInfo } from '../utils/Atoms'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
-import { MatchedUser } from '../utils/types'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import SwipeBtn from '../assets/left_arrow.png'
 import { showMatches } from '../utils/Atoms'
 import { BACKEND_URL } from '../../config'
@@ -12,7 +11,7 @@ const Swipe = () => {
 
       const [userInfoVal, setUserInfoVal] = useRecoilState(userInfo)
       const isShowMatches = useRecoilValue(showMatches)
-      const [cookies, setCookie, removeCookie] = useCookies()
+      const [cookies, _setCookie, _removeCookie] = useCookies()
       const userId = cookies.userId
       // console.log(userId)
       const [potentialMatches, setPotentialMatches] = useState <(any)[]> ([])

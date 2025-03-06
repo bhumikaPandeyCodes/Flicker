@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { userInfo } from '../../utils/Atoms';
 import axios from 'axios';
 import { useRecoilValue } from 'recoil';

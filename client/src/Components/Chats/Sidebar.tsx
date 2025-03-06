@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import ChatDisplay from './Chatdisplay'
 import MatchDisplay from './MatchDisplay'
 import { userInfo } from '../../utils/Atoms'
@@ -12,7 +12,7 @@ interface Props {
 
 
 const Sidebar: React.FC<Props> = ({ setClickedUser }) => {
-  const userInfoVal = useRecoilValue(userInfo)
+  // const userInfoVal = useRecoilValue(userInfo)
   const [viewMatch, setViewMatch] = useState(true)
   const isShowMatches = useRecoilValue(showMatches)
   

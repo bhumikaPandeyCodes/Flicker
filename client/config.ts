@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://flicker-tau.vercel.app/"
+export const BACKEND_URL = "localhost:3000"

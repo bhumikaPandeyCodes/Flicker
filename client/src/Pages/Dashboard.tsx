@@ -4,7 +4,6 @@ import { MatchedUser } from '../utils/types'
 import ProfileModal from '../Components/ProfileModal'
 import DashboardNav from '../Components/Chats/DashboardNav'
 import Swipe from '../Components/Swipe'
-import { showMatches } from '../utils/Atoms'
 const Dashboard = () => {
   // console.log(userId)
   const [clickedUser, setClickedUser] = useState<null | MatchedUser>(null)

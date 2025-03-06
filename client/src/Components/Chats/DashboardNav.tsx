@@ -12,8 +12,8 @@ import { showMatches } from '../../utils/Atoms'
 
 const DashboardNav = ()=> {
 
-  const [userInfoVal, setUserInfoVal] = useRecoilState(userInfo)
-  const [cookies, setCookie, removecookie] = useCookies()
+  const [userInfoVal, _setUserInfoVal] = useRecoilState(userInfo)
+  const [_cookies, _setCookie, removecookie] = useCookies()
   const [isShowMenu, setIsShowMenu] = useState(false)
   const setShowMatches = useSetRecoilState(showMatches)
   
