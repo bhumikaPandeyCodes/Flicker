@@ -11,7 +11,6 @@ import Navbar from '../Components/Navbar'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 import { isLogedIn, isSignup, showModal } from '../utils/Atoms'
 import AuthModal from '../Components/AuthModal'
-import { spring } from 'motion'
 // Types:
 
 const LandingPage = () => {

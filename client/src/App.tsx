@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil'
 // import Dashboard from './Pages/Dashboard'
 import { useCookies } from 'react-cookie'
 import Loading from './Pages/loading'
-import React, { Suspense,lazy } from 'react'
+import { Suspense,lazy } from 'react'
 const LandingPage = lazy(()=>import("./Pages/LandingPage"))
 const Onboarding = lazy(()=>import("./Pages/Onboarding"))
 const Dashboard = lazy(()=>import("./Pages/Dashboard"))
