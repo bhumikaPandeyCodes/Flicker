@@ -4,7 +4,7 @@ import {easeInOut, motion} from 'motion/react'
 import WomanImage from "../assets/woman.png"
 import ManImage from "../assets/man.png"
 import decImage from "../assets/deco.png"
-import IHead from "../assets/IHead.svg"
+import IHead from "../assets/IHEAD.svg"
 // IMPORTING COMPONENTS
 import Navbar from '../Components/Navbar'
 // import PopModal from './PopModal'
