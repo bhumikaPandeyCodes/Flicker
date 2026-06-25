@@ -24,13 +24,27 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const URI = process.env.URI;
 const SALT_ROUNDS = process.env.SALT_ROUNDS ? parseInt(process.env.SALT_ROUNDS, 10) : 10;
 const JWT_SECRET = process.env.JWT_SECRET;
+const http_1 = require("http"); // Add this
+const socket_io_1 = require("socket.io"); // Add this
 const client = new mongodb_1.MongoClient(URI);
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+const httpServer = (0, http_1.createServer)(app); // Create HTTP server
+const io = new socket_io_1.Server(httpServer, {
+    cors: {
+        // Sirf base URLs dalein, paths (/dashboard) mat dalein
+        origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+        methods: ["GET", "POST"],
+        credentials: true
+    },
+    // Transports ko yahan se hata dein taaki agar WS fail ho toh polling kaam kare
+    // transports: ["websocket"] 
+});
 app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('heyllo world');
     res.status(200).send('heloo');
 }));
+console.log(URI);
 // SIGNUP //
 app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //taking the email and password - 
@@ -99,8 +113,10 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(200).json({ success: true, message: "Logged in successfully!", userId: findUser.userId, token });
             console.log("log in successful and response is sent");
         }
+        console.log("nothing hap");
     }
     catch (err) {
+        console.log(err);
         if (err instanceof Error) {
             //CATCHING JWT ERROR
             if (err instanceof jsonwebtoken_1.default.JsonWebTokenError) {
@@ -128,7 +144,8 @@ app.put("/user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const users = db.collection("users");
         const query = { userId: formData.userId };
         const updateDocument = {
-            $set: { full_name: capitalName,
+            $set: {
+                full_name: capitalName,
                 dob_date: formData.dob_date,
                 dob_month: formData.dob_month,
                 dob_year: formData.dob_year,
@@ -137,7 +154,8 @@ app.put("/user", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 interest_gender: formData.interest_gender,
                 about_me: formData.about_me,
                 profile: formData.profile,
-                matches: formData.matches }
+                matches: formData.matches
+            }
         };
         const updateUser = yield users.updateOne(query, updateDocument);
         if (updateUser) {
@@ -350,9 +368,11 @@ app.get("/messages", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const response = yield users.find(query).toArray();
         const sendResponse = response.map((user) => {
             let full_time = new Date(user.timestamp);
-            return { from_userId: user.from_userId,
+            return {
+                from_userId: user.from_userId,
                 timestamp: user.timestamp,
-                message: user.message };
+                message: user.message
+            };
         });
         if (response) {
             res.status(200).json(sendResponse);
@@ -388,6 +408,39 @@ app.post("/send-message", (req, res) => __awaiter(void 0, void 0, void 0, functi
         res.json(400).json({ success: false });
     }
 }));
-app.listen(PORT, function () {
-    console.log("listening");
+//socket io chat
+io.on("connection", (socket) => {
+    console.log("User connected:", socket.id);
+    // Jab user chat open kare, use ek private room mein daal dein
+    socket.on("join_chat", (data) => {
+        const { senderId, receiverId } = data;
+        // Room ID unique honi chahiye (dono users ke liye same)
+        const roomId = [senderId, receiverId].sort().join("-");
+        socket.join(roomId);
+        console.log(`User joined room: ${roomId}`);
+    });
+    // Message bhejne ka logic
+    socket.on("send_message", (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { senderId, receiverId, message } = data;
+        const roomId = [senderId, receiverId].sort().join("-");
+        const timestamp = new Date().toISOString();
+        // Database mein save karein (aapka purana logic)
+        try {
+            const db = client.db("flicker");
+            const messages = db.collection("messages");
+            const newMessage = { from_userId: senderId, to_userId: receiverId, timestamp, message };
+            yield messages.insertOne(newMessage);
+            // Room mein maujood dusre user ko real-time message bhejein
+            io.to(roomId).emit("receive_message", newMessage);
+        }
+        catch (err) {
+            console.error("Socket error saving message:", err);
+        }
+    }));
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+    });
+});
+httpServer.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
