@@ -3,7 +3,7 @@ import { userInfo } from '../../utils/Atoms';
 import { useRecoilValue } from 'recoil';
 import axios from 'axios';
 import { BACKEND_URL } from '../../../config';
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import socket from "../../utils/socketutils"
 // const socket = io("http://localhost:3000");
 interface Props {
@@ -16,11 +16,11 @@ type MatchInfoType = {
   profile: String
 }
 
-type sentMessages = {
-  from_userId: String;
-  timestamp: string,
-  message: String;
-}
+// type sentMessages = {
+//   from_userId: String;
+//   timestamp: string,
+//   message: String;
+// }
 
 type MessageHistory = {
   from_userId: String;
@@ -44,6 +44,7 @@ const Messages = ({ chatUserId }: Props) => {
         params: { userId: chatUserId }
       })
       setMatchInfo(response.data)
+      matchInfo
       // console.log(response.data)
       // console.log(matchInfo)
 
