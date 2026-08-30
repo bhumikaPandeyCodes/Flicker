@@ -7,11 +7,26 @@ import cors from "cors"
 import jwt from "jsonwebtoken"
 import { v4 as uuidv4 } from "uuid"
 import 'dotenv/config'
+import multer from "multer"
+import { v2 as cloudinary } from "cloudinary"
+
 const app = express()
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000
 const URI = process.env.URI as string
 const SALT_ROUNDS = process.env.SALT_ROUNDS ? parseInt(process.env.SALT_ROUNDS, 10) : 10
 const JWT_SECRET = process.env.JWT_SECRET as string
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
+// Configure Multer
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
+
 import { createServer } from "http"; // Add this
 import { Server } from "socket.io"; // Add this
 
@@ -140,44 +155,74 @@ app.post("/login", async (req, res) => {
 })
 
 // UPDATE USER INFO (/ONBOARDING) //
-app.put("/user", async (req, res) => {
+app.put("/user", upload.single('profile'), async (req, res) => {
     //GET THE INFO FROM USER
-    const formData = req.body.formData
-    // console.log("formData")
-    // console.log(formData)
-    const capitalName = formData.full_name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    const { userId, full_name, dob_date, dob_month, dob_year, gender, show_gender, interest_gender, about_me } = req.body;
+    
+    const matches = req.body.matches ? JSON.parse(req.body.matches) : [];
+
+    const capitalName = full_name
+        ? full_name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+        : '';
+        
+    const parsedDobDate = dob_date ? Number(dob_date) : null;
+    const parsedDobMonth = dob_month ? Number(dob_month) : null;
+    const parsedDobYear = dob_year ? Number(dob_year) : null;
+    const isShowGender = show_gender === "true";
+
     //INSERT IN THE DATABASE
     try {
+        let profileUrl = '';
+        if (req.file) {
+            const uploadResult = await new Promise<any>((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'flicker_profiles' },
+                    (error, result) => {
+                        if (result) resolve(result);
+                        else reject(error);
+                    }
+                );
+                stream.write(req.file!.buffer);
+                stream.end();
+            });
+            profileUrl = uploadResult.secure_url;
+        }
+
         await client.connect()
         const db = client.db("flicker")
         const users = db.collection("users")
-        const query = { userId: formData.userId }
+        const query = { userId: userId }
+        
+        const updateFields: any = {
+            full_name: capitalName,
+            dob_date: parsedDobDate,
+            dob_month: parsedDobMonth,
+            dob_year: parsedDobYear,
+            gender: gender,
+            show_gender: isShowGender,
+            interest_gender: interest_gender,
+            about_me: about_me,
+            matches: matches
+        };
+
+        if (profileUrl) {
+            updateFields.profile = profileUrl;
+        }
+
         const updateDocument = {
-            $set: {
-                full_name: capitalName,
-                dob_date: formData.dob_date,
-                dob_month: formData.dob_month,
-                dob_year: formData.dob_year,
-                gender: formData.gender,
-                show_gender: formData.show_gender,
-                interest_gender: formData.interest_gender,
-                about_me: formData.about_me,
-                profile: formData.profile,
-                matches: formData.matches
-            }
+            $set: updateFields
         }
 
         const updateUser = await users.updateOne(query, updateDocument)
         if (updateUser) {
             res.status(200).json(updateUser)
-            // console.log("---------------update user:--------------- ")
-            // console.log(updateUser)
         }
 
     }
     catch (err) {
         console.log("//-------CAUGHT AN ERROR-------//")
         console.log(err)
+        res.status(500).json({ error: "An error occurred while updating profile" })
     }
 
 })

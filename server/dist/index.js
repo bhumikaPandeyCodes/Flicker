@@ -44,7 +44,7 @@ app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('heyllo world');
     res.status(200).send('heloo');
 }));
-console.log(URI);
+// console.log(URI);
 // SIGNUP //
 app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //taking the email and password - 

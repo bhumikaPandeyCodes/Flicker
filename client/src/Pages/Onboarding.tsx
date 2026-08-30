@@ -115,15 +115,17 @@ const Onboarding = () => {
     
   }
   
-  // const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
-  //   const { name, value, type, files } = e.currentTarget;
-  //   console.log("image uplaoded")
-  //   if (type === 'file' && files) {
-  //     setFormData(prevState => ({ ...prevState, [name]: files[0] }));
-  //   } else {
-  //     setFormData(prevState => ({ ...prevState, [name]: value }));
-  //   }
-  // };
+  const [profileFile, setProfileFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>('')
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setProfileFile(file)
+      setPreviewUrl(URL.createObjectURL(file))
+      setError(null)
+    }
+  }
 
   const handleChange = (e:React.FormEvent<HTMLInputElement>) =>{
     var name = e.currentTarget.name 
@@ -134,20 +136,44 @@ const Onboarding = () => {
     
   }
 
-  const handleSubmit = async(e:FormEvent<HTMLFormElement>)=>{
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!profileFile) {
+      setError({ type: "profile", message: "Please upload a profile photo." })
+      return
+    }
     console.log(formData)
 
-    try{
-      const response =await axios.put(`${BACKEND_URL}/user`,{formData})
-      const success = response.status == 200
-      success?navigate("/dashboard"):setError({type:"submit",message: "some error occured"})
+    try {
+      const data = new FormData()
+      data.append('userId', formData.userId || '')
+      data.append('full_name', formData.full_name)
+      if (formData.dob_date !== null) data.append('dob_date', String(formData.dob_date))
+      if (formData.dob_month !== null) data.append('dob_month', String(formData.dob_month))
+      if (formData.dob_year !== null) data.append('dob_year', String(formData.dob_year))
+      data.append('gender', formData.gender)
+      data.append('show_gender', String(formData.show_gender))
+      data.append('interest_gender', formData.interest_gender)
+      data.append('about_me', formData.about_me)
+      data.append('liked_profiles', JSON.stringify(formData.liked_profiles))
+      data.append('matches', JSON.stringify(formData.matches))
+      
+      if (profileFile) {
+        data.append('profile', profileFile)
+      }
+
+      const response = await axios.put(`${BACKEND_URL}/user`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      const success = response.status === 200
+      success ? navigate("/dashboard") : setError({ type: "submit", message: "some error occured" })
       console.log(response)
     }
-    catch(err){
+    catch (err) {
       console.log(err)
-      setError({type:"submit",message:"error caught"})
-
+      setError({ type: "submit", message: "error caught" })
     }
   }
 
@@ -323,21 +349,60 @@ const Onboarding = () => {
                   required={true}
                   onChange={handleChange}
                 />
-              <label htmlFor='Profile' className='font-semibold text-xl mb-4'>Profile</label>
+              <label htmlFor='profile' className='font-semibold text-xl mb-4'>Profile Photo</label>
+              <div className='flex flex-col items-center justify-center border-2 border-dashed border-slate-400 rounded-lg p-6 mb-6 hover:border-pinkbg1 transition duration-200 cursor-pointer bg-slate-50 relative group'>
                 <input
-                  className='border-2 border-slate-400 rounded-md py-1 px-2 mb-10'
-                    type='text'
-                    name='profile'
-                    required={true}
-                    onChange={handleChange}
+                  type='file'
+                  accept='image/*'
+                  name='profile'
+                  id='profile'
+                  required={true}
+                  className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
+                  onChange={handleFileChange}
                 />
-                {formData.profile && <img src={formData.profile} alt="Profile Preview" />}
-                {/* <img src={formData.profile && formData.profile} ></img> */}
-                <input
+                {previewUrl ? (
+                  <div className='relative w-40 h-40 group-hover:opacity-90 transition duration-200'>
+                    <img
+                      src={previewUrl}
+                      alt="Profile Preview"
+                      className='w-full h-full object-cover rounded-full border-4 border-pinkbg1 shadow-md'
+                    />
+                    <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 rounded-full opacity-0 group-hover:opacity-100 transition duration-200'>
+                      <span className='text-white text-xs font-semibold'>Change Photo</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className='flex flex-col items-center space-y-2 text-slate-500'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      strokeWidth={1.5}
+                      stroke='currentColor'
+                      className='w-12 h-12 text-slate-400 group-hover:text-pinkbg1 transition duration-200'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z'
+                      />
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        d='M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z'
+                      />
+                    </svg>
+                    <span className='font-medium text-sm group-hover:text-pinkbg1 transition duration-200'>Upload a profile picture</span>
+                    <span className='text-xs text-slate-400'>PNG, JPG, JPEG up to 5MB</span>
+                  </div>
+                )}
+              </div>
+              {error?.type === "profile" && <p className='text-red-500 -mt-4 mb-6 font-semibold'>{error?.message}</p>}
+              <input
                 type='submit'
                 name='submit'
-                className=' w-20 mb-2 self-center px-3 py-1 rounded-full border-2 border-pinkbg2 hover:bg-pinkbg1 hover:text-white'
-                />
+                className='w-20 mb-2 self-center px-3 py-1 rounded-full border-2 border-pinkbg2 hover:bg-pinkbg1 hover:text-white cursor-pointer transition'
+              />
           </div>
         </form>
       </div>
