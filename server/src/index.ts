@@ -43,7 +43,7 @@ const httpServer = createServer(app); // Create HTTP server
 const io = new Server(httpServer, {
     cors: {
         // Sirf base URLs dalein, paths (/dashboard) mat dalein
-        origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+        origin: ["http://localhost:5173", "http://127.0.0.1:5173", 'https://flicker-date.vercel.app'],
         methods: ["GET", "POST"],
         credentials: true
     },
