@@ -15,6 +15,7 @@ const AuthModal = () => {
     const [passwordValue, setPasswordValue]=useState("")
     const [confirmPasswordValue, setConfirmPasswordValue]=useState("")
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
     const [_cookie, setCookies, _removeCookies] = useCookies()
     
     const setShowModal = useSetRecoilState(showModal)
@@ -40,46 +41,51 @@ const AuthModal = () => {
       setConfirmPasswordValue(e.target.value)
     }
     
-    const  handleSubmit = async(e: FormEvent<HTMLFormElement>)=>{
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
+      setError("")
 
-      if(isSignupValue && (passwordValue != confirmPasswordValue))
-      {
+      if (isSignupValue && (passwordValue !== confirmPasswordValue)) {
         setError("Password and Confirm Password does not match")
+        return
       }
-      else{
-      try
-      {
-      console.log("submit ", isSignupValue)
 
-            const response = await axios.post(`${BACKEND_URL}/${isSignupValue?"signup":"login"}`, {email: emailValue, password: passwordValue})
-            console.log("handling login request using axios")
-            const success = response.status == 200
-            // console.log(response.data.token)
-            isSignupValue && success ? navigate("/onboarding"):setError("Couldn't signup")
-            !isSignupValue && success ? navigate("/dashboard"):setError("Couldn't login")
-            // console.log("status: ", response.status)
-            setCookies("token" ,response.data.token)
-            setCookies("userId", response.data.userId)
-      }
-      catch(err){
-        if(axios.isAxiosError(err)){
-          // user already exists
-          if(err.response && err.response.status){
-            setError(err.response.data.message)
+      setLoading(true)
+      try {
+        console.log("submit ", isSignupValue)
+        const response = await axios.post(`${BACKEND_URL}/${isSignupValue ? "signup" : "login"}`, {
+          email: emailValue,
+          password: passwordValue
+        })
+        console.log("handling login request using axios")
+        const success = response.status === 200
+        
+        if (success) {
+          setCookies("token", response.data.token)
+          setCookies("userId", response.data.userId)
+          if (isSignupValue) {
+            navigate("/onboarding")
+          } else {
+            navigate("/dashboard")
           }
-          else{
-            console.log(err.response?.status)
-              setError("something went wrong")
-          }
-
+        } else {
+          setError(isSignupValue ? "Couldn't signup" : "Couldn't login")
         }
-          
       }
-    }
-
-      // console.log(emailValue, passwordValue);
-      
+      catch (err) {
+        if (axios.isAxiosError(err)) {
+          if (err.response && err.response.data && err.response.data.message) {
+            setError(err.response.data.message)
+          } else {
+            setError("something went wrong")
+          }
+        } else {
+          setError("An unexpected error occurred")
+        }
+      }
+      finally {
+        setLoading(false)
+      }
     }
     
       return (
@@ -118,11 +124,23 @@ const AuthModal = () => {
         className='border-2 border-gray-400 w-full rounded-md  sm:my-2 my-1 sm:px-3 px-2 sm:py-1 py-[2px] outline-none focus:border-gray-500'
         />}
 
-        <input
-        type='submit'
-        name='submit'
-        className='rounded-full w-full sm:my-3 my-2 bg-pinkbg1 px-5 sm:py-2 py-1 sm:text-lg text-gray-100'
-        />
+        <button
+          type='submit'
+          disabled={loading}
+          className={`rounded-full w-full sm:my-3 my-2 bg-pinkbg1 px-5 sm:py-2 py-1 sm:text-lg text-gray-100 flex items-center justify-center transition-all duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 active:scale-[0.98]'}`}
+        >
+          {loading ? (
+            <div className='flex items-center space-x-2 animate-pulse'>
+              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>{isSignupValue ? "Signing up..." : "Logging in..."}</span>
+            </div>
+          ) : (
+            <span>{isSignupValue ? "Sign Up" : "Login"}</span>
+          )}
+        </button>
       </form>
         <p className='text-red-600' >{error ? error: ""}</p>
         {isSignupValue?

@@ -31,8 +31,22 @@ import { createServer } from "http"; // Add this
 import { Server } from "socket.io"; // Add this
 
 const client = new MongoClient(URI)
+
+// Connect to MongoDB and set up unique index on email
+async function initDB() {
+    try {
+        await client.connect();
+        const db = client.db("flicker");
+        const users = db.collection("users");
+        await users.createIndex({ email: 1 }, { unique: true });
+        console.log("Database unique index on email verified.");
+    } catch (err) {
+        console.error("Failed to verify/create database email index:", err);
+    }
+}
+initDB();
 app.use(cors({
-    origin: ['https://flicker-date.vercel.app', 'http://localhost:5173'],
+    origin: ['https://flicker-date.vercel.app', 'https://flicker-dating.vercel.app', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -95,9 +109,14 @@ app.post("/signup", async (req, res) => {
 
         res.status(200).json({ "success": true, message: "Signed in successfully!", email, token, userId })
     }
-    catch (err) {
+    catch (err: any) {
+        if (err && err.code === 11000) {
+            res.status(409).json({ message: "email already exist" })
+            return;
+        }
         if (err instanceof jwt.JsonWebTokenError) {
             res.status(500).json({ message: "json webtoken error couldn't generate webtoken" })
+            return;
         }
         console.log(err)
         res.status(505).json({ "success": false })
