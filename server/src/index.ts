@@ -31,7 +31,12 @@ import { createServer } from "http"; // Add this
 import { Server } from "socket.io"; // Add this
 
 const client = new MongoClient(URI)
-app.use(cors())
+app.use(cors({
+    origin: ['https://flicker-date.vercel.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json())
 
 const httpServer = createServer(app); // Create HTTP server
@@ -158,13 +163,13 @@ app.post("/login", async (req, res) => {
 app.put("/user", upload.single('profile'), async (req, res) => {
     //GET THE INFO FROM USER
     const { userId, full_name, dob_date, dob_month, dob_year, gender, show_gender, interest_gender, about_me } = req.body;
-    
+
     const matches = req.body.matches ? JSON.parse(req.body.matches) : [];
 
     const capitalName = full_name
         ? full_name.split(' ').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
         : '';
-        
+
     const parsedDobDate = dob_date ? Number(dob_date) : null;
     const parsedDobMonth = dob_month ? Number(dob_month) : null;
     const parsedDobYear = dob_year ? Number(dob_year) : null;
@@ -192,7 +197,7 @@ app.put("/user", upload.single('profile'), async (req, res) => {
         const db = client.db("flicker")
         const users = db.collection("users")
         const query = { userId: userId }
-        
+
         const updateFields: any = {
             full_name: capitalName,
             dob_date: parsedDobDate,
